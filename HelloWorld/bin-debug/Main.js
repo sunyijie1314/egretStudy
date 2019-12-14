@@ -8,21 +8,6 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
-var MyGrid = (function (_super) {
-    __extends(MyGrid, _super);
-    function MyGrid() {
-        var _this = _super.call(this) || this;
-        _this.drawGrid();
-        return _this;
-    }
-    MyGrid.prototype.drawGrid = function () {
-        this.graphics.beginFill(0x0000ff);
-        this.graphics.drawRect(0, 0, 2000, 2000);
-        this.graphics.endFill();
-    };
-    return MyGrid;
-}(egret.Shape));
-__reflect(MyGrid.prototype, "MyGrid");
 var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
@@ -31,16 +16,8 @@ var Main = (function (_super) {
         return _this;
     }
     Main.prototype.onAddToStage = function (event) {
-        var _myGrid = new MyGrid();
-        this.addChild(_myGrid);
-        var shp = new egret.Shape();
-        shp.graphics.beginFill(0x00ff00);
-        shp.graphics.drawRect(0, 0, 100, 100);
-        shp.graphics.endFill();
-        // shp.anchorOffsetX = 50;
-        shp.x = 500;
-        shp.y = 500;
-        this.addChild(shp);
+        var _myGrid = new Grid(111, 1);
+        this.addChildAt(_myGrid, 0);
     };
     return Main;
 }(egret.DisplayObjectContainer));
