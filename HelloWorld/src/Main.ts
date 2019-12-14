@@ -23,7 +23,7 @@ class Main extends egret.DisplayObjectContainer{
         shp.graphics.beginFill( 0x00ff00 );
         shp.graphics.drawRect( 0, 0, 100, 100 );
         shp.graphics.endFill();
-        // shp.anchorOffsetX = 50;
+        shp.anchorOffsetX = 50;
         shp.x = 500;
         shp.y = 500;
         this.addChild( shp );
