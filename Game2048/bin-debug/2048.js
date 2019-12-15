@@ -22,11 +22,34 @@ var Game = (function (_super) {
     }
     Game.prototype.onAddToStage = function (event) {
         this.start();
+        this.addEvent();
     };
+    //开始
     Game.prototype.start = function () {
+        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
+            this.m_isGrid[i] = false;
+            if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent)) {
+                this.m_grids[i].parent.removeChildren();
+            }
+        }
         this.randomGrid();
         this.randomGrid();
     };
+    Game.prototype.addEvent = function () {
+        var startX = 0;
+        var startY = 0;
+        var endX = 0;
+        var endY = 0;
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (e) {
+            startX = e.localX;
+            startY = e.localY;
+        }, this);
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_END, function (e) {
+            endX = e.localX;
+            endY = e.localY;
+        }, this);
+    };
+    //随机方格
     Game.prototype.randomGrid = function () {
         if (true == this.isFull()) {
             console.log("Grid is full!");
@@ -50,6 +73,7 @@ var Game = (function (_super) {
         this.m_grids[num].setText("" + info.num);
         this.addChild(this.m_grids[num]);
     };
+    //是否没有空方格了
     Game.prototype.isFull = function () {
         for (var i = 1; i < Main.m_sNumX * Main.m_sNumY; i++) {
             if (false == this.m_isGrid[i]) {

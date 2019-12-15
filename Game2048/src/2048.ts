@@ -2,6 +2,7 @@ class Game extends egret.DisplayObjectContainer {
 
     private m_grids = new Array<Grid>(Main.m_sNumX * Main.m_sNumY);
     private m_isGrid = new Array<boolean>(Main.m_sNumX * Main.m_sNumY);
+    private direction:string;
 
     public constructor(){
         super();
@@ -11,10 +12,13 @@ class Game extends egret.DisplayObjectContainer {
         }
         this.addEventListener(egret.Event.ADDED_TO_STAGE,this.onAddToStage,this);
     }
+
     private onAddToStage(event:egret.Event){
         this.start();
+        this.addEvent();
     }
 
+    //开始
     private start():void
     {
         for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++ )
@@ -29,6 +33,28 @@ class Game extends egret.DisplayObjectContainer {
         this.randomGrid();
     }
 
+    private addEvent():void
+    {
+        var startX:number = 0;
+        var startY:number = 0;
+        var endX:number = 0;
+        var endY:number = 0;
+        
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, (e:egret.TouchEvent) => 
+        {
+            startX = e.localX;
+            startY = e.localY;
+
+        }, this);
+
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_END, (e:egret.TouchEvent) => 
+        {
+            endX = e.localX;
+            endY = e.localY;
+        }, this);
+    }
+
+    //随机方格
     private randomGrid():void
     {
         if (true == this.isFull())
@@ -59,6 +85,7 @@ class Game extends egret.DisplayObjectContainer {
 
     }
 
+    //是否没有空方格了
     private isFull():boolean
     {
         for (var i = 1; i < Main.m_sNumX * Main.m_sNumY; i++)
