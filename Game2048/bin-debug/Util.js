@@ -13,90 +13,62 @@ var Util = (function () {
         }
         var nullInfo = {
             "num": num,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xf98383,
-            "fontSize": 25
+            "backgroundColor": 0xf98383
         };
         return nullInfo;
     };
     Util.nums = [
         {
             "num": 2,
-            "color": 0x776e65,
-            "backgroundColor": 0xeee4da,
-            "fontSize": 65
+            "backgroundColor": 0xeee4da
         },
         {
             "num": 4,
-            "color": 0x776e65,
-            "backgroundColor": 0xede0c8,
-            "fontSize": 65
+            "backgroundColor": 0xede0c8
         },
         {
             "num": 8,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xf2b179,
-            "fontSize": 55
+            "backgroundColor": 0xf2b179
         },
         {
             "num": 16,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xf59563,
-            "fontSize": 55
+            "backgroundColor": 0xf59563
         },
         {
             "num": 32,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xf67c5f,
-            "fontSize": 55
+            "backgroundColor": 0xf67c5f
         },
         {
             "num": 64,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xf65e3b,
-            "fontSize": 55
+            "backgroundColor": 0xf65e3b
         },
         {
             "num": 128,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xedcf72,
-            "fontSize": 45
+            "backgroundColor": 0xedcf72
         },
         {
             "num": 256,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xedcc61,
-            "fontSize": 45
+            "backgroundColor": 0xedcc61
         },
         {
             "num": 512,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xedc850,
-            "fontSize": 45
+            "backgroundColor": 0xedc850
         },
         {
             "num": 1024,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xabe358,
-            "fontSize": 35
+            "backgroundColor": 0xabe358
         },
         {
             "num": 2048,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0x4dd9cf,
-            "fontSize": 35
+            "backgroundColor": 0x4dd9cf
         },
         {
             "num": 4096,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xa283f9,
-            "fontSize": 35
+            "backgroundColor": 0xa283f9
         },
         {
             "num": 8192,
-            "color": 0xf9f6f2,
-            "backgroundColor": 0xf98383,
-            "fontSize": 35
+            "backgroundColor": 0xf98383
         }
     ];
     return Util;

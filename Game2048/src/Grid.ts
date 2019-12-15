@@ -52,6 +52,16 @@ class Grid extends egret.DisplayObjectContainer
         this.m_text.anchorOffsetY = this.m_text.textHeight / 2;
     }
 
+    public copy(gridIn:Grid):void
+    {
+        this.setX(gridIn.getX());
+        this.setY(gridIn.getY());
+        this.setWidth(gridIn.getWidth());
+        this.setHeight(gridIn.getHeight());
+        this.setColor(gridIn.getColor());
+        this.setText(gridIn.getText());
+    }
+
     //get & set
     public getX():number { return this.m_gridX; }
     public setX(x:number):void { this.m_gridX = x; }

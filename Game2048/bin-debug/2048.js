@@ -14,6 +14,9 @@ var Game = (function (_super) {
         var _this = _super.call(this) || this;
         _this.m_grids = new Array(Main.m_sNumX * Main.m_sNumY);
         _this.m_isGrid = new Array(Main.m_sNumX * Main.m_sNumY);
+        _this.direction = "";
+        _this.isMerge = false;
+        _this.isOver = false;
         for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
             _this.m_isGrid[i] = false;
         }
@@ -36,18 +39,128 @@ var Game = (function (_super) {
         this.randomGrid();
     };
     Game.prototype.addEvent = function () {
+        var _this = this;
         var startX = 0;
         var startY = 0;
-        var endX = 0;
-        var endY = 0;
+        var defferenceX = 0;
+        var defferenceY = 0;
         this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (e) {
             startX = e.localX;
             startY = e.localY;
         }, this);
         this.stage.addEventListener(egret.TouchEvent.TOUCH_END, function (e) {
-            endX = e.localX;
-            endY = e.localY;
+            defferenceX = startX - e.localX;
+            defferenceY = startY - e.localY;
+            _this.getDirection(defferenceX, defferenceY);
+            _this.move();
         }, this);
+    };
+    Game.prototype.move = function () {
+        var index = new Array(Main.m_sNumY);
+        if ("right" == this.direction) {
+            for (var i = 0; i < Main.m_sNumY; i++) {
+                index[i] = Main.m_sNumX * (i + 1) - 1;
+            }
+            this.merge(index, -1, Main.m_sNumX);
+        }
+        else if ("left" == this.direction) {
+            for (var i = 0; i < Main.m_sNumY; i++) {
+                index[i] = Main.m_sNumX * i;
+            }
+            this.merge(index, 1, Main.m_sNumX);
+        }
+        else if ("up" == this.direction) {
+            for (var i = 0; i < Main.m_sNumX; i++) {
+                index[i] = i;
+            }
+            this.merge(index, Main.m_sNumX, Main.m_sNumY);
+        }
+        else if ("down" == this.direction) {
+            for (var i = 0; i < Main.m_sNumX; i++) {
+                index[i] = (Main.m_sNumY - 1) * Main.m_sNumX + i;
+            }
+            this.merge(index, -Main.m_sNumX, Main.m_sNumY);
+        }
+        this.randomGrid();
+    };
+    Game.prototype.merge = function (startIndexs, nextNum, layerNum) {
+        if (true == this.isMerge) {
+            console.log("now is merging.");
+            return;
+        }
+        if (true == this.isOver) {
+            console.log("now is game over.");
+            return;
+        }
+        this.isMerge = true;
+        for (var _i = 0, startIndexs_1 = startIndexs; _i < startIndexs_1.length; _i++) {
+            var startIndex = startIndexs_1[_i];
+            var next = startIndex + nextNum;
+            var end = startIndex + nextNum * (layerNum - 1);
+            for (var start = startIndex; (start !== end) && (next !== end);) {
+                while (false == this.m_isGrid[next]) {
+                    next = next + nextNum;
+                    if ((next == end) && (false == this.m_isGrid[end])) {
+                        break;
+                    }
+                }
+                if (false == this.m_isGrid[next]) {
+                    break;
+                }
+                if (false == this.m_isGrid[start]) {
+                    this.m_grids[start] = new Grid();
+                    this.m_grids[start].copy(this.m_grids[next]);
+                    this.setPosition(start, this.m_grids[start]);
+                    if (undefined !== this.m_grids[next].parent) {
+                        this.m_grids[next].parent.addChild(this.m_grids[start]);
+                        this.m_grids[next].parent.removeChild(this.m_grids[next]);
+                        this.m_isGrid[start] = true;
+                        this.m_isGrid[next] = false;
+                    }
+                }
+                else if (this.m_grids[start].getText() == this.m_grids[next].getText()) {
+                    var num = Number(this.m_grids[start].getText());
+                    var txt = String(num * 2);
+                    var numInfo = Util.getNumInfo(num * 2);
+                    this.m_grids[start].setText(txt);
+                    this.m_grids[start].setColor(numInfo.backgroundColor);
+                    if (undefined !== this.m_grids[next].parent) {
+                        this.m_grids[next].parent.removeChild(this.m_grids[next]);
+                    }
+                    this.m_isGrid[next] = false;
+                }
+                start = start + nextNum;
+                next = start + nextNum;
+            }
+        }
+        this.isMerge = false;
+    };
+    Game.prototype.getDirection = function (x, y) {
+        if (Math.abs(x) > Math.abs(y)) {
+            if (x >= 0) {
+                this.direction = "left";
+            }
+            else {
+                this.direction = "right";
+            }
+        }
+        else if (Math.abs(x) < Math.abs(y)) {
+            if (y >= 0) {
+                this.direction = "up";
+            }
+            else {
+                this.direction = "down";
+            }
+        }
+        else {
+            console.log("can't get direction.");
+        }
+    };
+    Game.prototype.setPosition = function (num, grid) {
+        var vRow = num % Main.m_sNumX;
+        var vCol = Math.floor(num / Main.m_sNumY);
+        grid.setX((vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth);
+        grid.setY((vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight);
     };
     //随机方格
     Game.prototype.randomGrid = function () {
@@ -60,17 +173,14 @@ var Game = (function (_super) {
             num = Main.rand(Main.m_sNumX * Main.m_sNumY) - 1;
         }
         this.m_isGrid[num] = true;
-        var vRow = num % Main.m_sNumX;
-        var vCol = Math.floor(num / Main.m_sNumY);
         this.m_grids[num] = new Grid();
-        this.m_grids[num].setX((vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth);
-        this.m_grids[num].setY((vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight);
+        this.setPosition(num, this.m_grids[num]);
         this.m_grids[num].setWidth(Main.m_sGridWidth);
         this.m_grids[num].setHeight(Main.m_sGridHeight);
         var gridNum = 2 * Main.rand(2);
         var info = Util.getNumInfo(gridNum);
         this.m_grids[num].setColor(info.color);
-        this.m_grids[num].setText("" + info.num);
+        this.m_grids[num].setText(String(info.num));
         this.addChild(this.m_grids[num]);
     };
     //是否没有空方格了

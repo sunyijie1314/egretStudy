@@ -38,6 +38,14 @@ var Grid = (function (_super) {
         this.m_text.anchorOffsetX = this.m_text.textWidth / 2;
         this.m_text.anchorOffsetY = this.m_text.textHeight / 2;
     };
+    Grid.prototype.copy = function (gridIn) {
+        this.setX(gridIn.getX());
+        this.setY(gridIn.getY());
+        this.setWidth(gridIn.getWidth());
+        this.setHeight(gridIn.getHeight());
+        this.setColor(gridIn.getColor());
+        this.setText(gridIn.getText());
+    };
     //get & set
     Grid.prototype.getX = function () { return this.m_gridX; };
     Grid.prototype.setX = function (x) { this.m_gridX = x; };
