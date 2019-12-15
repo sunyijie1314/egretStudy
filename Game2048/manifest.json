@@ -8,7 +8,9 @@
 		"libs/modules/promise/promise.js"
 	],
 	"game": [
+		"bin-debug/2048.js",
 		"bin-debug/Grid.js",
-		"bin-debug/Main.js"
+		"bin-debug/Main.js",
+		"bin-debug/Util.js"
 	]
 }
