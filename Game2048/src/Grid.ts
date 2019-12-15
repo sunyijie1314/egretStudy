@@ -7,7 +7,7 @@ class Grid extends egret.DisplayObjectContainer
     private m_gridHeight:number;
     private m_gridColor:number;
     private m_gridText:string;
-    private m_text:egret.TextField;
+    private m_text:eui.Label;
 
     //重载构造函数
     constructor()
@@ -18,8 +18,8 @@ class Grid extends egret.DisplayObjectContainer
     constructor(gridX?:number, gridY?:number, gridWidth?:number, gridHeight?:number, gridColor?:number, gridText?:string)
     {
         super();
-        this.m_text = new egret.TextField;
         this.assign(gridX,gridY,gridWidth,gridHeight,gridColor,gridText);
+        this.m_text = new eui.Label(this.m_gridText);
         this.addEventListener(egret.Event.ADDED_TO_STAGE,this.onAddToStage,this);
     }
 
@@ -30,24 +30,18 @@ class Grid extends egret.DisplayObjectContainer
 
     private createGrid():void 
     {
-        var shp:egret.Shape = new egret.Shape();
-        shp.graphics.beginFill(this.m_gridColor);
-        shp.graphics.drawRect(this.m_gridX, this.m_gridY, this.m_gridWidth, this.m_gridHeight);
-        shp.graphics.endFill();
-        this.addChild( shp );
-
-var xxx = new eui.
-
-        this.resetPosition();
-        this.m_text.x = this.m_gridWidth / 2 + this.m_gridX;
-        this.m_text.y = this.m_gridHeight / 2 + this.m_gridY;
-        this.m_text.textColor = 0x000000;
+        var grid:eui.Rect = new eui.Rect(this.m_gridWidth, this.m_gridHeight, this.m_gridColor);
+        grid.x = this.m_gridX;
+        grid.y = this.m_gridY;
+        this.addChild( grid );
+        
         this.m_text.textAlign = egret.HorizontalAlign.CENTER;
         this.m_text.verticalAlign = egret.VerticalAlign.MIDDLE;
-        this.m_text.type = egret.TextFieldType.DYNAMIC;
-        this.m_text.lineSpacing = 6;
-        this.addChild( this.m_text );
-        
+        this.resetPosition();
+        this.m_text.x = this.m_gridWidth / 2;
+        this.m_text.y = this.m_gridHeight / 2;
+
+        grid.addChild(this.m_text);
     }
 
     //计算实现矩形正中
