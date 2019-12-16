@@ -17,6 +17,7 @@ var Game = (function (_super) {
         _this.direction = "";
         _this.isMerge = false;
         _this.isOver = false;
+        _this.isMove = false;
         for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
             _this.m_isGrid[i] = false;
         }
@@ -33,6 +34,7 @@ var Game = (function (_super) {
             this.m_isGrid[i] = false;
             if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent)) {
                 this.m_grids[i].parent.removeChildren();
+                this.m_grids[i] = undefined;
             }
         }
         this.randomGrid();
@@ -57,6 +59,7 @@ var Game = (function (_super) {
     };
     Game.prototype.move = function () {
         var index = new Array(Main.m_sNumY);
+        this.isMove = false;
         if ("right" == this.direction) {
             for (var i = 0; i < Main.m_sNumY; i++) {
                 index[i] = Main.m_sNumX * (i + 1) - 1;
@@ -81,7 +84,6 @@ var Game = (function (_super) {
             }
             this.merge(index, -Main.m_sNumX, Main.m_sNumY);
         }
-        this.randomGrid();
     };
     Game.prototype.merge = function (startIndexs, nextNum, layerNum) {
         if (true == this.isMerge) {
@@ -97,7 +99,7 @@ var Game = (function (_super) {
             var startIndex = startIndexs_1[_i];
             var next = startIndex + nextNum;
             var end = startIndex + nextNum * (layerNum - 1);
-            for (var start = startIndex; (start !== end) && (next !== end);) {
+            for (var start = startIndex; start !== end;) {
                 while (false == this.m_isGrid[next]) {
                     next = next + nextNum;
                     if ((next == end) && (false == this.m_isGrid[end])) {
@@ -107,6 +109,9 @@ var Game = (function (_super) {
                 if (false == this.m_isGrid[next]) {
                     break;
                 }
+                if ((next < 0) || (next > Main.m_sNumX * Main.m_sNumY)) {
+                    break;
+                }
                 if (false == this.m_isGrid[start]) {
                     this.m_grids[start] = new Grid();
                     this.m_grids[start].copy(this.m_grids[next]);
@@ -114,9 +119,11 @@ var Game = (function (_super) {
                     if (undefined !== this.m_grids[next].parent) {
                         this.m_grids[next].parent.addChild(this.m_grids[start]);
                         this.m_grids[next].parent.removeChild(this.m_grids[next]);
+                        this.m_grids[next] = undefined;
                         this.m_isGrid[start] = true;
                         this.m_isGrid[next] = false;
                     }
+                    this.isMove = true;
                 }
                 else if (this.m_grids[start].getText() == this.m_grids[next].getText()) {
                     var num = Number(this.m_grids[start].getText());
@@ -126,14 +133,21 @@ var Game = (function (_super) {
                     this.m_grids[start].setColor(numInfo.backgroundColor);
                     if (undefined !== this.m_grids[next].parent) {
                         this.m_grids[next].parent.removeChild(this.m_grids[next]);
+                        this.m_grids[next] = undefined;
                     }
                     this.m_isGrid[next] = false;
+                    this.isMove = true;
                 }
+                console.log("start " + start);
+                console.log("next " + next);
                 start = start + nextNum;
                 next = start + nextNum;
             }
         }
         this.isMerge = false;
+        if (true == this.isMove) {
+            this.randomGrid();
+        }
     };
     Game.prototype.getDirection = function (x, y) {
         if (Math.abs(x) > Math.abs(y)) {
