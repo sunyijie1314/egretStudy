@@ -100,21 +100,25 @@ var Game = (function (_super) {
             var next = startIndex + nextNum;
             var end = startIndex + nextNum * (layerNum - 1);
             for (var start = startIndex; start !== end;) {
+                console.log("startxx " + start);
+                console.log("endxx " + end);
                 while (false == this.m_isGrid[next]) {
-                    next = next + nextNum;
                     if ((next == end) && (false == this.m_isGrid[end])) {
                         break;
                     }
+                    next = next + nextNum;
+                    console.log("nextxx " + next);
                 }
+                console.log("next1 " + next);
                 if (false == this.m_isGrid[next]) {
-                    break;
-                }
-                if ((next < 0) || (next > Main.m_sNumX * Main.m_sNumY)) {
-                    break;
+                    start = start + nextNum;
+                    next = start + nextNum;
+                    continue;
                 }
                 if (false == this.m_isGrid[start]) {
                     this.m_grids[start] = new Grid();
                     this.m_grids[start].copy(this.m_grids[next]);
+                    // this.m_grids[start] = this.m_grids[next];
                     this.setPosition(start, this.m_grids[start]);
                     if (undefined !== this.m_grids[next].parent) {
                         this.m_grids[next].parent.addChild(this.m_grids[start]);
@@ -137,11 +141,21 @@ var Game = (function (_super) {
                     }
                     this.m_isGrid[next] = false;
                     this.isMove = true;
+                    start = start + nextNum;
+                    next = start + nextNum;
+                    continue;
+                }
+                if ((end == next) || (next == start + nextNum)) {
+                    start = start + nextNum;
+                    next = start + nextNum;
+                    continue;
+                }
+                else {
+                    next = next + nextNum;
                 }
                 console.log("start " + start);
                 console.log("next " + next);
-                start = start + nextNum;
-                next = start + nextNum;
+                console.log("             ");
             }
         }
         this.isMerge = false;
