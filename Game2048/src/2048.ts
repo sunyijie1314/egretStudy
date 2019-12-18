@@ -48,15 +48,54 @@ class Game extends egret.DisplayObjectContainer {
         {
             startX = e.localX;
             startY = e.localY;
+            console.log("startX = " + startX);
+            console.log("startY = " + startY);
         }, this);
 
         this.stage.addEventListener(egret.TouchEvent.TOUCH_END, (e:egret.TouchEvent) => 
         {
-            defferenceX = startX - e.localX;
-            defferenceY = startY - e.localY;
-            this.getDirection(defferenceX, defferenceY);
-            this.move();
+            defferenceX = e.localX - startX;
+            defferenceY = e.localY - startY;
+            console.log("e.localX =" + e.localX );
+            console.log("e.localY =" + e.localY );
+            if (true == this.getDirection(defferenceX, defferenceY))
+            {
+                this.move();
+            }
         }, this);
+
+        // 键盘适配无语
+        // document.addEventListener("keydown", function(evt:any)
+        // {
+        //     if ("ArrowLeft" == evt.code)
+        //     {
+        //         Util.direction = "left";
+        //     }
+        //     else if ("ArrowRight" == evt.code)
+        //     {
+        //         Util.direction = "right";
+        //     }
+        //     else if ("ArrowUp" == evt.code)
+        //     {
+        //         Util.direction = "up";
+        //     }
+        //     else if ("ArrowDown" == evt.code)
+        //     {
+        //         Util.direction = "down";
+        //     }
+        // })
+    }
+
+    private isWin():boolean
+    {
+        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++)
+        {
+            if ("2048" == this.m_grids[i].getText())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private move():void
@@ -117,8 +156,6 @@ class Game extends egret.DisplayObjectContainer {
             let end = startIndex + nextNum * (layerNum - 1)
             for (var start = startIndex; start !== end; )
             {
-                console.log("startxx " + start);
-                console.log("endxx " + end);
                 while (false == this.m_isGrid[next])
                 {
                     if ((next == end) && (false == this.m_isGrid[end]))
@@ -126,9 +163,7 @@ class Game extends egret.DisplayObjectContainer {
                         break;
                     }
                     next = next + nextNum;
-                    console.log("nextxx " + next);
                 }
-                console.log("next1 " + next);
                 if (false == this.m_isGrid[next])
                 {
                     start = start + nextNum;
@@ -140,7 +175,6 @@ class Game extends egret.DisplayObjectContainer {
                 {
                     this.m_grids[start] = new Grid();
                     this.m_grids[start].copy(this.m_grids[next]);
-                    // this.m_grids[start] = this.m_grids[next];
                     this.setPosition(start, this.m_grids[start]);
                     if (undefined !== this.m_grids[next].parent)
                     {
@@ -154,13 +188,19 @@ class Game extends egret.DisplayObjectContainer {
                 }
                 else if (this.m_grids[start].getText() == this.m_grids[next].getText())
                 {
+                    var vGrid:Grid = new Grid();
                     let num = Number(this.m_grids[start].getText());
                     let txt = String(num * 2);
                     let numInfo = Util.getNumInfo(num * 2);
                     this.m_grids[start].setText(txt);
                     this.m_grids[start].setColor(numInfo.backgroundColor);
-                    if (undefined !== this.m_grids[next].parent)
+                    vGrid.copy(this.m_grids[start]);
+                    if ((undefined !== this.m_grids[next].parent) && (undefined !== this.m_grids[start].parent))
                     {
+                        //巨坑 不重新添加无法更新自己状态
+                        this.m_grids[start].parent.removeChild(this.m_grids[start]);
+                        this.m_grids[start] = vGrid;
+                        this.m_grids[next].parent.addChild(this.m_grids[start]);
                         this.m_grids[next].parent.removeChild(this.m_grids[next]);
                         this.m_grids[next] = undefined;
                     }
@@ -171,7 +211,7 @@ class Game extends egret.DisplayObjectContainer {
                     continue;
                 }
 
-                if ((end == next) || (next == start + nextNum))
+                if ((end == next) || ((next == start + nextNum) && (true == this.m_isGrid[next])))
                 {
                     start = start + nextNum;
                     next = start + nextNum;
@@ -181,49 +221,49 @@ class Game extends egret.DisplayObjectContainer {
                 {
                     next = next + nextNum;
                 }    
-                
-                console.log("start " + start);
-                console.log("next " + next);
-                console.log("             ");
-
-                
             }
         }
         this.isMerge = false;
         if (true == this.isMove)
         {
             this.randomGrid();
+            if (true == this.isWin())
+            {
+                console.log("YOU GOT IT!");
+            }
         }
     }
 
-    private getDirection(x:number, y:number):void
+    private getDirection(x:number, y:number):boolean
     {
         if (Math.abs(x) > Math.abs(y))
         {
             if (x >= 0)
             {
-                this.direction = "left";
+                this.direction = "right";
             }
             else
             {
-                this.direction = "right";
+                this.direction = "left";
             }
         }
         else if (Math.abs(x) < Math.abs(y))
         {
             if (y >= 0)
             {
-                this.direction = "up";
+                this.direction = "down";
             }
             else
             {
-                this.direction = "down";
+                this.direction = "up";
             }
         }
         else
         {
             console.log("can't get direction.");
+            return false;
         }
+        return true;
     }
 
     private setPosition(num:number, grid:Grid):void
@@ -240,6 +280,7 @@ class Game extends egret.DisplayObjectContainer {
         if (true == this.isFull())
         {
             console.log("Grid is full!");
+            //即Game Over
             return;
         }
         
@@ -256,16 +297,15 @@ class Game extends egret.DisplayObjectContainer {
 
         var gridNum = 2 * Main.rand(2);
         let info:any = Util.getNumInfo(gridNum);
-        this.m_grids[num].setColor(info.color);
+        this.m_grids[num].setColor(info.backgroundColor);
         this.m_grids[num].setText(String(info.num));
         this.addChild(this.m_grids[num]);
-
     }
 
     //是否没有空方格了
     private isFull():boolean
     {
-        for (var i = 1; i < Main.m_sNumX * Main.m_sNumY; i++)
+        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++)
         {
             if (false == this.m_isGrid[i])
             {

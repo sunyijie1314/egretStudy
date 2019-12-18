@@ -17,6 +17,7 @@ var Util = (function () {
         };
         return nullInfo;
     };
+    Util.direction = "";
     Util.nums = [
         {
             "num": 2,

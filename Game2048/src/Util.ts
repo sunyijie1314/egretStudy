@@ -1,5 +1,5 @@
 class Util {
-
+    public static direction:string = "";
     public static nums =
         [
             {
