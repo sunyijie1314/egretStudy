@@ -29,7 +29,7 @@ class Game extends egret.DisplayObjectContainer {
             this.m_isGrid[i] = false;
             if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent))
             {
-                this.m_grids[i].parent.removeChildren();
+                this.m_grids[i].parent.removeChild(this.m_grids[i]);
                 this.m_grids[i] = undefined;
             }
         }
@@ -48,16 +48,12 @@ class Game extends egret.DisplayObjectContainer {
         {
             startX = e.localX;
             startY = e.localY;
-            console.log("startX = " + startX);
-            console.log("startY = " + startY);
         }, this);
 
         this.stage.addEventListener(egret.TouchEvent.TOUCH_END, (e:egret.TouchEvent) => 
         {
             defferenceX = e.localX - startX;
             defferenceY = e.localY - startY;
-            console.log("e.localX =" + e.localX );
-            console.log("e.localY =" + e.localY );
             if (true == this.getDirection(defferenceX, defferenceY))
             {
                 this.move();
@@ -90,12 +86,35 @@ class Game extends egret.DisplayObjectContainer {
     {
         for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++)
         {
-            if ("2048" == this.m_grids[i].getText())
+            if ((true == this.m_isGrid[i]) && ("2048" == this.m_grids[i].getText()))
             {
                 return true;
             }
         }
         return false;
+    }
+
+    private isGameOver():boolean
+    {
+        for(var now:number = 0; now < Main.m_sNumX; now++, under = now + Main.m_sNumX)
+        {
+            var under:number = now + Main.m_sNumX;
+            while(under < Main.m_sNumX * Main.m_sNumY)
+            {
+                if(this.m_grids[now].getText() == this.m_grids[under].getText())
+                {
+                    return false;
+                }
+                var right:number = now + 1;
+                if((0 !== (right % Main.m_sNumX)) && (this.m_grids[now].getText() == this.m_grids[right].getText()))
+                {
+                    return false;
+                }
+                now = now + Main.m_sNumX;
+                under = under + Main.m_sNumX;
+            }
+        }
+        return true;
     }
 
     private move():void
@@ -280,7 +299,10 @@ class Game extends egret.DisplayObjectContainer {
         if (true == this.isFull())
         {
             console.log("Grid is full!");
-            //即Game Over
+            if (true == this.isGameOver())
+            {
+                console.log("Game Over");
+            }
             return;
         }
         

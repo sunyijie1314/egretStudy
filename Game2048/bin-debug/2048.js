@@ -33,7 +33,7 @@ var Game = (function (_super) {
         for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
             this.m_isGrid[i] = false;
             if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent)) {
-                this.m_grids[i].parent.removeChildren();
+                this.m_grids[i].parent.removeChild(this.m_grids[i]);
                 this.m_grids[i] = undefined;
             }
         }
@@ -49,14 +49,10 @@ var Game = (function (_super) {
         this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (e) {
             startX = e.localX;
             startY = e.localY;
-            console.log("startX = " + startX);
-            console.log("startY = " + startY);
         }, this);
         this.stage.addEventListener(egret.TouchEvent.TOUCH_END, function (e) {
             defferenceX = e.localX - startX;
             defferenceY = e.localY - startY;
-            console.log("e.localX =" + e.localX);
-            console.log("e.localY =" + e.localY);
             if (true == _this.getDirection(defferenceX, defferenceY)) {
                 _this.move();
             }
@@ -81,6 +77,31 @@ var Game = (function (_super) {
         //         Util.direction = "down";
         //     }
         // })
+    };
+    Game.prototype.isWin = function () {
+        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
+            if ((true == this.m_isGrid[i]) && ("2048" == this.m_grids[i].getText())) {
+                return true;
+            }
+        }
+        return false;
+    };
+    Game.prototype.isGameOver = function () {
+        for (var now = 0; now < Main.m_sNumX; now++, under = now + Main.m_sNumX) {
+            var under = now + Main.m_sNumX;
+            while (under < Main.m_sNumX * Main.m_sNumY) {
+                if (this.m_grids[now].getText() == this.m_grids[under].getText()) {
+                    return false;
+                }
+                var right = now + 1;
+                if ((0 !== (right % Main.m_sNumX)) && (this.m_grids[now].getText() == this.m_grids[right].getText())) {
+                    return false;
+                }
+                now = now + Main.m_sNumX;
+                under = under + Main.m_sNumX;
+            }
+        }
+        return true;
     };
     Game.prototype.move = function () {
         var index = new Array(Main.m_sNumY);
@@ -184,6 +205,9 @@ var Game = (function (_super) {
         this.isMerge = false;
         if (true == this.isMove) {
             this.randomGrid();
+            if (true == this.isWin()) {
+                console.log("YOU GOT IT!");
+            }
         }
     };
     Game.prototype.getDirection = function (x, y) {
@@ -219,6 +243,9 @@ var Game = (function (_super) {
     Game.prototype.randomGrid = function () {
         if (true == this.isFull()) {
             console.log("Grid is full!");
+            if (true == this.isGameOver()) {
+                console.log("Game Over");
+            }
             return;
         }
         var num = Main.rand(Main.m_sNumX * Main.m_sNumY) - 1;

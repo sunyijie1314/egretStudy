@@ -11,6 +11,7 @@
 		"bin-debug/2048.js",
 		"bin-debug/Grid.js",
 		"bin-debug/Main.js",
+		"bin-debug/Mask.js",
 		"bin-debug/Util.js"
 	]
 }
