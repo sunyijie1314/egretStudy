@@ -37,7 +37,7 @@ var Main = (function (_super) {
         var _myGrid = new Game();
         stageGrid.addChild(_myGrid);
         var mask = new Mask();
-        this.addChild(mask);
+        //this.addChild(mask);
     };
     //随机数
     Main.rand = function (number) {

@@ -45,7 +45,7 @@ class Main extends egret.DisplayObjectContainer{
         stageGrid.addChild(_myGrid);
 
         var mask:Mask = new Mask();
-        this.addChild(mask);
+        //this.addChild(mask);
     }
 
     //随机数

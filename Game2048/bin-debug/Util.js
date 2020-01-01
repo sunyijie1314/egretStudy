@@ -1,6 +1,18 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
+var Data = (function () {
+    function Data(orgGridNum, nowGridNum, x, y, time, isMerge) {
+        this.m_orgGirdNum = orgGridNum;
+        this.m_nowGirdNum = nowGridNum;
+        this.m_x = x;
+        this.m_y = y;
+        this.m_time = time;
+        this.m_isMerge = isMerge;
+    }
+    return Data;
+}());
+__reflect(Data.prototype, "Data");
 var Util = (function () {
     function Util() {
     }

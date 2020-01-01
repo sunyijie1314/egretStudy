@@ -1,3 +1,24 @@
+class Data {
+    public m_orgGirdNum:number;
+    public m_nowGirdNum:number;
+    public m_x:number;
+    public m_y:number;
+    public m_time:number;
+    public m_isMerge:boolean;
+
+    public constructor(orgGridNum:number, nowGridNum:number, x:number, y:number, time:number, isMerge:boolean){
+        this.m_orgGirdNum = orgGridNum;
+        this.m_nowGirdNum = nowGridNum;
+        this.m_x = x;
+        this.m_y = y;
+        this.m_time = time;
+        this.m_isMerge = isMerge;
+    }
+
+}
+
+
+
 class Util {
     public static direction:string = "";
     public static nums =
