@@ -1,26 +1,6 @@
-class Data {
-    public m_orgGirdNum:number;
-    public m_nowGirdNum:number;
-    public m_x:number;
-    public m_y:number;
-    public m_time:number;
-    public m_isMerge:boolean;
-
-    public constructor(orgGridNum:number, nowGridNum:number, x:number, y:number, time:number, isMerge:boolean){
-        this.m_orgGirdNum = orgGridNum;
-        this.m_nowGirdNum = nowGridNum;
-        this.m_x = x;
-        this.m_y = y;
-        this.m_time = time;
-        this.m_isMerge = isMerge;
-    }
-
-}
-
-
 
 class Util {
-    public static direction:string = "";
+    //方格参数
     public static nums =
         [
             {
@@ -77,12 +57,14 @@ class Util {
             }
         ];
 
+    //得到方格参数
     public static getNumInfo(num: number) {
         for (let numInfo of this.nums) {
             if (numInfo.num == num) {
                 return numInfo;
             }
         }
+        //如果不存在枚举中，返回固定值
         let nullInfo = {
                 "num": num,
                 "backgroundColor": 0xf98383

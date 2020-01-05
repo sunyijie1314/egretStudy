@@ -28,30 +28,32 @@ class Grid extends egret.DisplayObjectContainer
         this.createGrid();
     }
 
+    //创建方格
     private createGrid():void 
     {
-        var grid:eui.Rect = new eui.Rect(this.m_gridWidth, this.m_gridHeight, this.m_gridColor);
-        grid.x = this.m_gridX;
-        grid.y = this.m_gridY;
-        this.addChild( grid );
+        var gridRect = new eui.Rect(this.m_gridWidth, this.m_gridHeight, this.m_gridColor);
+        gridRect.x = this.m_gridX;
+        gridRect.y = this.m_gridY;
+        this.addChild( gridRect );
         
         this.m_text.textAlign = egret.HorizontalAlign.CENTER;
         this.m_text.verticalAlign = egret.VerticalAlign.MIDDLE;
         this.resetPosition();
-        this.m_text.x = this.m_gridWidth / 2;
-        this.m_text.y = this.m_gridHeight / 2;
 
-        grid.addChild(this.m_text);
+        gridRect.addChild(this.m_text);
     }
 
     //计算实现矩形正中
     private resetPosition():void
     {
         this.m_text.text = this.m_gridText;
-        this.m_text.anchorOffsetX = this.m_text.textWidth / 2;
-        this.m_text.anchorOffsetY = this.m_text.textHeight / 2;
+        this.m_text.anchorOffsetY = this.m_text.height / 2;
+        this.m_text.anchorOffsetX = this.m_text.width / 2;
+        this.m_text.x = this.m_gridWidth / 2;
+        this.m_text.y = this.m_gridHeight / 2;
     }
 
+    //复制  实际可以直接赋值
     public copy(gridIn:Grid):void
     {
         this.setX(gridIn.getX());
@@ -62,7 +64,7 @@ class Grid extends egret.DisplayObjectContainer
         this.setText(gridIn.getText());
     }
 
-    //get & set
+    //get & set 实际可以不设置get & set
     public getX():number { return this.m_gridX; }
     public setX(x:number):void { this.m_gridX = x; }
 

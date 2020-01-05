@@ -12,8 +12,7 @@ var Game = (function (_super) {
     __extends(Game, _super);
     function Game() {
         var _this = _super.call(this) || this;
-        _this.m_grids = new Array(Main.m_sNumX * Main.m_sNumY);
-        // private m_isGrid = new Array<boolean>(Main.m_sNumX * Main.m_sNumY);
+        _this.m_grids = new Array(Main.m_sNum * Main.m_sNum);
         _this.m_direction = "";
         _this.m_isMerge = false;
         _this.m_isOver = false;
@@ -27,7 +26,7 @@ var Game = (function (_super) {
     };
     //开始
     Game.prototype.start = function () {
-        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
+        for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++) {
             if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent)) {
                 this.m_grids[i].parent.removeChild(this.m_grids[i]);
                 this.m_grids[i] = undefined;
@@ -36,6 +35,7 @@ var Game = (function (_super) {
         this.randomGrid();
         this.randomGrid();
     };
+    //事件监听：触碰和键盘
     Game.prototype.addEvent = function () {
         var _this = this;
         var startX = 0;
@@ -53,90 +53,89 @@ var Game = (function (_super) {
                 _this.move();
             }
         }, this);
-        // 键盘适配无语
-        // document.addEventListener("keydown", function(evt:any)
-        // {
-        //     if ("ArrowLeft" == evt.code)
-        //     {
-        //         Util.direction = "left";
-        //     }
-        //     else if ("ArrowRight" == evt.code)
-        //     {
-        //         Util.direction = "right";
-        //     }
-        //     else if ("ArrowUp" == evt.code)
-        //     {
-        //         Util.direction = "up";
-        //     }
-        //     else if ("ArrowDown" == evt.code)
-        //     {
-        //         Util.direction = "down";
-        //     }
-        // })
+        //键盘适配
+        document.addEventListener("keyup", function (event) {
+            var key = event.code;
+            switch (key) {
+                case "ArrowLeft":
+                    _this.m_direction = "left";
+                    break;
+                case "ArrowRight":
+                    _this.m_direction = "right";
+                    break;
+                case "ArrowUp":
+                    _this.m_direction = "up";
+                    break;
+                case "ArrowDown":
+                    _this.m_direction = "down";
+                    break;
+            }
+            _this.move();
+        });
     };
+    //是否赢，达到2048
     Game.prototype.isWin = function () {
-        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
-            // if ((true == this.m_isGrid[i]) && ("2048" == this.m_grids[i].getText()))
+        for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++) {
             if ((undefined != this.m_grids[i]) && ("2048" == this.m_grids[i].getText())) {
                 return true;
             }
         }
         return false;
     };
+    //是否失败
     Game.prototype.isGameOver = function () {
-        for (var now = 0; now < Main.m_sNumX; now++, under = now + Main.m_sNumX) {
-            var under = now + Main.m_sNumX;
-            while (under < Main.m_sNumX * Main.m_sNumY) {
-                if (this.m_grids[now].getText() == this.m_grids[under].getText()) {
-                    return false;
+        for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++) {
+            var numGrid = this.m_grids[i];
+            if (undefined == numGrid) {
+                return false;
+            }
+            else {
+                if (i % Main.m_sNum < Main.m_sNum - 1) {
+                    var rightGrid = this.m_grids[i + 1];
+                    if (undefined == rightGrid || numGrid.getText() == rightGrid.getText()) {
+                        return false;
+                    }
                 }
-                var right = now + 1;
-                if ((0 !== (right % Main.m_sNumX)) && (this.m_grids[now].getText() == this.m_grids[right].getText())) {
-                    return false;
+                if (i / Main.m_sNum < Main.m_sNum - 1) {
+                    var downGrid = this.m_grids[i + Main.m_sNum];
+                    if (undefined == downGrid || numGrid.getText() == downGrid.getText()) {
+                        return false;
+                    }
                 }
-                now = now + Main.m_sNumX;
-                under = under + Main.m_sNumX;
             }
         }
         return true;
     };
+    //根据方向进行移动
     Game.prototype.move = function () {
-        var index = new Array(Main.m_sNumY);
+        var index = new Array(Main.m_sNum);
         this.m_isMoved = false;
         if ("right" == this.m_direction) {
-            for (var i = 0; i < Main.m_sNumY; i++) {
-                index[i] = Main.m_sNumX * (i + 1) - 1;
+            for (var i = 0; i < Main.m_sNum; i++) {
+                index[i] = Main.m_sNum * (i + 1) - 1;
             }
-            this.merge(index, -1, Main.m_sNumX);
+            this.merge(index, -1, Main.m_sNum);
         }
         else if ("left" == this.m_direction) {
-            for (var i = 0; i < Main.m_sNumY; i++) {
-                index[i] = Main.m_sNumX * i;
+            for (var i = 0; i < Main.m_sNum; i++) {
+                index[i] = Main.m_sNum * i;
             }
-            this.merge(index, 1, Main.m_sNumX);
+            this.merge(index, 1, Main.m_sNum);
         }
         else if ("up" == this.m_direction) {
-            for (var i = 0; i < Main.m_sNumX; i++) {
+            for (var i = 0; i < Main.m_sNum; i++) {
                 index[i] = i;
             }
-            this.merge(index, Main.m_sNumX, Main.m_sNumY);
+            this.merge(index, Main.m_sNum, Main.m_sNum);
         }
         else if ("down" == this.m_direction) {
-            for (var i = 0; i < Main.m_sNumX; i++) {
-                index[i] = (Main.m_sNumY - 1) * Main.m_sNumX + i;
+            for (var i = 0; i < Main.m_sNum; i++) {
+                index[i] = (Main.m_sNum - 1) * Main.m_sNum + i;
             }
-            this.merge(index, -Main.m_sNumX, Main.m_sNumY);
+            this.merge(index, -Main.m_sNum, Main.m_sNum);
         }
     };
-    Game.prototype.animateMove = function (start, next, time, isMerge) {
-        var vRow = start % Main.m_sNumX;
-        var vCol = Math.floor(start / Main.m_sNumY);
-        var fromX = this.m_grids[next].getX();
-        var fromY = this.m_grids[next].getY();
-        var toX = (vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth;
-        var toY = (vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight;
-        var data = new Data(next, start, toX - fromX, toY - fromY, 50 * time, isMerge);
-    };
+    //开始移动
     Game.prototype.merge = function (startIndexs, nextNum, layerNum) {
         var _this = this;
         if (true == this.m_isMerge) {
@@ -167,8 +166,8 @@ var Game = (function (_super) {
                     continue;
                 }
                 var lSpace = Math.abs((start - next) / nextNum);
-                var vRow = start % Main.m_sNumX;
-                var vCol = Math.floor(start / Main.m_sNumY);
+                var vRow = start % Main.m_sNum;
+                var vCol = Math.floor(start / Main.m_sNum);
                 var fromX = this.m_grids[next].getX();
                 var fromY = this.m_grids[next].getY();
                 var toX = (vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth;
@@ -189,6 +188,11 @@ var Game = (function (_super) {
                     this.addChild(this.m_grids[start]);
                     mergePromises.push(this.moveByAndFadeOut(toX - fromX, toY - fromY, 50 * lSpace, this.m_grids[next]));
                     this.m_grids[next] = undefined;
+                    start = start + nextNum;
+                    next = start + nextNum;
+                    continue;
+                }
+                else {
                     start = start + nextNum;
                     next = start + nextNum;
                     continue;
@@ -216,8 +220,8 @@ var Game = (function (_super) {
         else {
             this.m_isMerge = false;
         }
-        //this.animate();
     };
+    //移动到空位置动画
     Game.prototype.moveBy = function (x, y, time, grid) {
         return new Promise(function (resolve) {
             egret.Tween.get(grid)
@@ -228,6 +232,7 @@ var Game = (function (_super) {
                 .call(resolve);
         });
     };
+    //合并动画
     Game.prototype.moveByAndFadeOut = function (x, y, time, grid) {
         return new Promise(function (resolve) {
             egret.Tween.get(grid)
@@ -244,21 +249,30 @@ var Game = (function (_super) {
             });
         });
     };
+    //获得方向
     Game.prototype.getDirection = function (x, y) {
         if (Math.abs(x) > Math.abs(y)) {
-            if (x >= 0) {
+            if (x >= 10) {
                 this.m_direction = "right";
             }
-            else {
+            else if (x <= -10) {
                 this.m_direction = "left";
+            }
+            else {
+                console.log("can't get direction.");
+                return false;
             }
         }
         else if (Math.abs(x) < Math.abs(y)) {
-            if (y >= 0) {
+            if (y >= 10) {
                 this.m_direction = "down";
             }
-            else {
+            else if (y <= -10) {
                 this.m_direction = "up";
+            }
+            else {
+                console.log("can't get direction.");
+                return false;
             }
         }
         else {
@@ -267,14 +281,16 @@ var Game = (function (_super) {
         }
         return true;
     };
+    //设置方向
     Game.prototype.setPosition = function (num, grid) {
-        var vRow = num % Main.m_sNumX;
-        var vCol = Math.floor(num / Main.m_sNumY);
+        var vRow = num % Main.m_sNum;
+        var vCol = Math.floor(num / Main.m_sNum);
         grid.setX((vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth);
         grid.setY((vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight);
     };
     //随机方格
     Game.prototype.randomGrid = function () {
+        //理论上不会进入
         if (true == this.isFull()) {
             console.log("Grid is full!");
             if (true == this.isGameOver()) {
@@ -282,12 +298,10 @@ var Game = (function (_super) {
             }
             return;
         }
-        var num = Main.rand(Main.m_sNumX * Main.m_sNumY) - 1;
-        // while (true == this.m_isGrid[num])
+        var num = Main.rand(Main.m_sNum * Main.m_sNum) - 1;
         while (undefined != this.m_grids[num]) {
-            num = Main.rand(Main.m_sNumX * Main.m_sNumY) - 1;
+            num = Main.rand(Main.m_sNum * Main.m_sNum) - 1;
         }
-        // this.m_isGrid[num] = true;
         this.m_grids[num] = new Grid();
         this.setPosition(num, this.m_grids[num]);
         this.m_grids[num].setWidth(Main.m_sGridWidth);
@@ -297,11 +311,17 @@ var Game = (function (_super) {
         this.m_grids[num].setColor(info.backgroundColor);
         this.m_grids[num].setText(String(info.num));
         this.addChild(this.m_grids[num]);
+        //判断师父无法移动
+        if (true == this.isFull()) {
+            console.log("Grid is full!");
+            if (true == this.isGameOver()) {
+                console.log("Game Over");
+            }
+        }
     };
     //是否没有空方格了
     Game.prototype.isFull = function () {
-        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++) {
-            // if (false == this.m_isGrid[i])
+        for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++) {
             if (undefined == this.m_grids[i]) {
                 return false;
             }

@@ -20,24 +20,26 @@ var Grid = (function (_super) {
     Grid.prototype.onAddToStage = function (event) {
         this.createGrid();
     };
+    //创建方格
     Grid.prototype.createGrid = function () {
-        var grid = new eui.Rect(this.m_gridWidth, this.m_gridHeight, this.m_gridColor);
-        grid.x = this.m_gridX;
-        grid.y = this.m_gridY;
-        this.addChild(grid);
+        var gridRect = new eui.Rect(this.m_gridWidth, this.m_gridHeight, this.m_gridColor);
+        gridRect.x = this.m_gridX;
+        gridRect.y = this.m_gridY;
+        this.addChild(gridRect);
         this.m_text.textAlign = egret.HorizontalAlign.CENTER;
         this.m_text.verticalAlign = egret.VerticalAlign.MIDDLE;
         this.resetPosition();
-        this.m_text.x = this.m_gridWidth / 2;
-        this.m_text.y = this.m_gridHeight / 2;
-        grid.addChild(this.m_text);
+        gridRect.addChild(this.m_text);
     };
     //计算实现矩形正中
     Grid.prototype.resetPosition = function () {
         this.m_text.text = this.m_gridText;
-        this.m_text.anchorOffsetX = this.m_text.textWidth / 2;
-        this.m_text.anchorOffsetY = this.m_text.textHeight / 2;
+        this.m_text.anchorOffsetY = this.m_text.height / 2;
+        this.m_text.anchorOffsetX = this.m_text.width / 2;
+        this.m_text.x = this.m_gridWidth / 2;
+        this.m_text.y = this.m_gridHeight / 2;
     };
+    //复制  实际可以直接赋值
     Grid.prototype.copy = function (gridIn) {
         this.setX(gridIn.getX());
         this.setY(gridIn.getY());
@@ -46,7 +48,7 @@ var Grid = (function (_super) {
         this.setColor(gridIn.getColor());
         this.setText(gridIn.getText());
     };
-    //get & set
+    //get & set 实际可以不设置get & set
     Grid.prototype.getX = function () { return this.m_gridX; };
     Grid.prototype.setX = function (x) { this.m_gridX = x; };
     Grid.prototype.getY = function () { return this.m_gridY; };

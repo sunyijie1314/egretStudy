@@ -1,7 +1,6 @@
 class Game extends egret.DisplayObjectContainer {
 
-    private m_grids = new Array<Grid>(Main.m_sNumX * Main.m_sNumY);
-    // private m_isGrid = new Array<boolean>(Main.m_sNumX * Main.m_sNumY);
+    private m_grids = new Array<Grid>(Main.m_sNum * Main.m_sNum);
     private m_direction:string = "";
     private m_isMerge:boolean = false;
     private m_isOver:boolean = false;
@@ -21,7 +20,7 @@ class Game extends egret.DisplayObjectContainer {
     //开始
     private start():void
     {
-        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++ )
+        for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++ )
         {
             if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent))
             {
@@ -33,6 +32,7 @@ class Game extends egret.DisplayObjectContainer {
         this.randomGrid();
     }
 
+    //事件监听：触碰和键盘
     private addEvent():void
     {
         var startX:number = 0;
@@ -56,33 +56,32 @@ class Game extends egret.DisplayObjectContainer {
             }
         }, this);
 
-        // 键盘适配无语
-        // document.addEventListener("keydown", function(evt:any)
-        // {
-        //     if ("ArrowLeft" == evt.code)
-        //     {
-        //         Util.direction = "left";
-        //     }
-        //     else if ("ArrowRight" == evt.code)
-        //     {
-        //         Util.direction = "right";
-        //     }
-        //     else if ("ArrowUp" == evt.code)
-        //     {
-        //         Util.direction = "up";
-        //     }
-        //     else if ("ArrowDown" == evt.code)
-        //     {
-        //         Util.direction = "down";
-        //     }
-        // })
+        //键盘适配
+        document.addEventListener("keyup", event => {
+            let key = event.code;
+            switch (key) {
+                case "ArrowLeft":
+                    this.m_direction = "left";
+                    break;
+                case "ArrowRight":
+                    this.m_direction = "right";
+                    break;
+                case "ArrowUp":
+                    this.m_direction = "up";
+                    break;
+                case "ArrowDown":
+                    this.m_direction = "down";
+                    break;
+            }
+            this.move();
+        });
     }
 
+    //是否赢，达到2048
     private isWin():boolean
     {
-        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++)
+        for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++)
         {
-            // if ((true == this.m_isGrid[i]) && ("2048" == this.m_grids[i].getText()))
             if ((undefined != this.m_grids[i]) && ("2048" == this.m_grids[i].getText()))
             {
                 return true;
@@ -91,80 +90,81 @@ class Game extends egret.DisplayObjectContainer {
         return false;
     }
 
+    //是否失败
     private isGameOver():boolean
     {
-        for(var now:number = 0; now < Main.m_sNumX; now++, under = now + Main.m_sNumX)
+        for (let i = 0; i < Main.m_sNum * Main.m_sNum; i++) 
         {
-            var under:number = now + Main.m_sNumX;
-            while(under < Main.m_sNumX * Main.m_sNumY)
+            let numGrid = this.m_grids[i];
+            if (undefined == numGrid) 
             {
-                if(this.m_grids[now].getText() == this.m_grids[under].getText())
+                return false;
+            }
+            else 
+            {
+                if (i % Main.m_sNum < Main.m_sNum - 1) 
                 {
-                    return false;
+                    let rightGrid = this.m_grids[i + 1];
+                    if (undefined == rightGrid || numGrid.getText() == rightGrid.getText()) 
+                    {
+                        return false;
+                    }
                 }
-                var right:number = now + 1;
-                if((0 !== (right % Main.m_sNumX)) && (this.m_grids[now].getText() == this.m_grids[right].getText()))
+
+                if (i / Main.m_sNum < Main.m_sNum - 1) 
                 {
-                    return false;
+                    let downGrid = this.m_grids[i + Main.m_sNum];
+                    if (undefined == downGrid || numGrid.getText() == downGrid.getText()) 
+                    {
+                        return false;
+                    }
                 }
-                now = now + Main.m_sNumX;
-                under = under + Main.m_sNumX;
             }
         }
         return true;
     }
 
+    //根据方向进行移动
     private move():void
     {
-        var index:number[] = new Array<number>(Main.m_sNumY);
+        var index:number[] = new Array<number>(Main.m_sNum);
         this.m_isMoved = false;
         if ("right" == this.m_direction)
         {
-            for (var i = 0; i < Main.m_sNumY; i++)
+            for (var i = 0; i < Main.m_sNum; i++)
             {
-                index[i] = Main.m_sNumX * (i + 1) - 1;
+                index[i] = Main.m_sNum * (i + 1) - 1;
             }
-            this.merge(index, -1, Main.m_sNumX);
+            this.merge(index, -1, Main.m_sNum);
         }
         else if ("left" == this.m_direction)
         {
-            for (var i = 0; i < Main.m_sNumY; i++)
+            for (var i = 0; i < Main.m_sNum; i++)
             {
-                index[i] = Main.m_sNumX * i;
+                index[i] = Main.m_sNum * i;
             }
-            this.merge(index, 1, Main.m_sNumX);
+            this.merge(index, 1, Main.m_sNum);
         }
         else if ("up" == this.m_direction)
         {
-            for (var i = 0; i < Main.m_sNumX; i++)
+            for (var i = 0; i < Main.m_sNum; i++)
             {
                 index[i] = i;
             }
-            this.merge(index, Main.m_sNumX, Main.m_sNumY);
+            this.merge(index, Main.m_sNum, Main.m_sNum);
         }
         else if ("down" == this.m_direction)
         {
-            for (var i = 0; i < Main.m_sNumX; i++)
+            for (var i = 0; i < Main.m_sNum; i++)
             {
-                index[i] = (Main.m_sNumY - 1) * Main.m_sNumX + i;
+                index[i] = (Main.m_sNum - 1) * Main.m_sNum + i;
             }
-            this.merge(index, -Main.m_sNumX, Main.m_sNumY);
+            this.merge(index, -Main.m_sNum, Main.m_sNum);
         }
         
     }
 
-    private animateMove(start:number, next:number, time:number, isMerge:boolean):void
-    {
-        let vRow = start % Main.m_sNumX;
-        let vCol = Math.floor(start / Main.m_sNumY);
-        let fromX = this.m_grids[next].getX();
-        let fromY = this.m_grids[next].getY();
-        let toX = (vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth;
-        let toY = (vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight;
-
-        let data:Data = new Data(next, start, toX - fromX, toY - fromY, 50 * time, isMerge);
-    }
-
+    //开始移动
     private merge(startIndexs:number[], nextNum:number, layerNum:number):void
     {
 
@@ -203,12 +203,12 @@ class Game extends egret.DisplayObjectContainer {
                 }
 
                 let lSpace = Math.abs((start - next) / nextNum);
-                        let vRow = start % Main.m_sNumX;
-        let vCol = Math.floor(start / Main.m_sNumY);
-        let fromX = this.m_grids[next].getX();
-        let fromY = this.m_grids[next].getY();
-        let toX = (vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth;
-        let toY = (vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight;
+                let vRow = start % Main.m_sNum;
+                let vCol = Math.floor(start / Main.m_sNum);
+                let fromX = this.m_grids[next].getX();
+                let fromY = this.m_grids[next].getY();
+                let toX = (vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth;
+                let toY = (vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight;
 
                 //移动到空位置
                 if (undefined == this.m_grids[start])
@@ -230,6 +230,12 @@ class Game extends egret.DisplayObjectContainer {
                     mergePromises.push(this.moveByAndFadeOut(toX - fromX, toY - fromY, 50 * lSpace, this.m_grids[next]));
                     this.m_grids[next] = undefined;
 
+                    start = start + nextNum;
+                    next = start + nextNum;
+                    continue;
+                }
+                else
+                {
                     start = start + nextNum;
                     next = start + nextNum;
                     continue;
@@ -261,9 +267,9 @@ class Game extends egret.DisplayObjectContainer {
         else {
             this.m_isMerge = false;
         }
-        //this.animate();
     }
 
+    //移动到空位置动画
     public moveBy(x: number, y: number, time: number, grid:Grid) {
         return new Promise(resolve => {
             egret.Tween.get(grid)
@@ -275,6 +281,7 @@ class Game extends egret.DisplayObjectContainer {
         });
     }
 
+    //合并动画
     public moveByAndFadeOut(x: number, y: number, time: number, grid:Grid) {
         return new Promise(resolve => {
             egret.Tween.get(grid)
@@ -292,28 +299,39 @@ class Game extends egret.DisplayObjectContainer {
         });
     }
 
+    //获得方向
     private getDirection(x:number, y:number):boolean
     {
         if (Math.abs(x) > Math.abs(y))
         {
-            if (x >= 0)
+            if (x >= 10)
             {
                 this.m_direction = "right";
             }
-            else
+            else if (x <= -10)
             {
                 this.m_direction = "left";
+            }
+            else
+            {
+                console.log("can't get direction.");
+                return false;
             }
         }
         else if (Math.abs(x) < Math.abs(y))
         {
-            if (y >= 0)
+            if (y >= 10)
             {
                 this.m_direction = "down";
             }
-            else
+            else if (y <= -10)
             {
                 this.m_direction = "up";
+            }
+            else
+            {
+                console.log("can't get direction.");
+                return false;
             }
         }
         else
@@ -324,10 +342,11 @@ class Game extends egret.DisplayObjectContainer {
         return true;
     }
 
+    //设置方向
     private setPosition(num:number, grid:Grid):void
     {
-        var vRow = num % Main.m_sNumX;
-        var vCol = Math.floor(num / Main.m_sNumY);
+        var vRow = num % Main.m_sNum;
+        var vCol = Math.floor(num / Main.m_sNum);
         grid.setX((vRow + 1) * Main.m_sSpace + vRow * Main.m_sGridWidth);
         grid.setY((vCol + 1) * Main.m_sSpace + vCol * Main.m_sGridHeight);
     }
@@ -335,6 +354,7 @@ class Game extends egret.DisplayObjectContainer {
     //随机方格
     private randomGrid():void
     {
+        //理论上不会进入
         if (true == this.isFull())
         {
             console.log("Grid is full!");
@@ -345,13 +365,11 @@ class Game extends egret.DisplayObjectContainer {
             return;
         }
         
-        var num:number = Main.rand( Main.m_sNumX * Main.m_sNumY ) - 1;
-        // while (true == this.m_isGrid[num])
+        var num:number = Main.rand( Main.m_sNum * Main.m_sNum ) - 1;
         while (undefined != this.m_grids[num])
         {
-            num = Main.rand( Main.m_sNumX * Main.m_sNumY ) - 1;
+            num = Main.rand( Main.m_sNum * Main.m_sNum ) - 1;
         }
-        // this.m_isGrid[num] = true;
         this.m_grids[num] = new Grid();
         this.setPosition(num, this.m_grids[num]);
         this.m_grids[num].setWidth(Main.m_sGridWidth);
@@ -362,14 +380,23 @@ class Game extends egret.DisplayObjectContainer {
         this.m_grids[num].setColor(info.backgroundColor);
         this.m_grids[num].setText(String(info.num));
         this.addChild(this.m_grids[num]);
+
+        //判断师父无法移动
+        if (true == this.isFull())
+        {
+            console.log("Grid is full!");
+            if (true == this.isGameOver())
+            {
+                console.log("Game Over");
+            }
+        }
     }
 
     //是否没有空方格了
     private isFull():boolean
     {
-        for (var i = 0; i < Main.m_sNumX * Main.m_sNumY; i++)
+        for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++)
         {
-            // if (false == this.m_isGrid[i])
             if (undefined == this.m_grids[i])
             {
                 return false;
@@ -377,4 +404,5 @@ class Game extends egret.DisplayObjectContainer {
         }
         return true;
     }
+    
 }
