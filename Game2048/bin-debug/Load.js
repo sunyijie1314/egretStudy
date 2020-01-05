@@ -71,12 +71,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var Main = (function (_super) {
-    __extends(Main, _super);
-    function Main() {
+var Load = (function (_super) {
+    __extends(Load, _super);
+    function Load() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Main.prototype.createChildren = function () {
+    Load.prototype.createChildren = function () {
         _super.prototype.createChildren.call(this);
         egret.lifecycle.addLifecycleListener(function (context) {
             // custom lifecycle plugin
@@ -96,22 +96,21 @@ var Main = (function (_super) {
             console.log(e);
         });
     };
-    Main.prototype.runGame = function () {
+    Load.prototype.runGame = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.loadResource()];
+                    case 0: return [4 /*yield*/, this.loadResource()
+                        // let main:Main = new Main();
+                    ];
                     case 1:
                         _a.sent();
-                        this.createGrid();
-                        this.numTextInput();
-                        this.btnReset();
                         return [2 /*return*/];
                 }
             });
         });
     };
-    Main.prototype.loadResource = function () {
+    Load.prototype.loadResource = function () {
         return __awaiter(this, void 0, void 0, function () {
             var loadingView, e_1;
             return __generator(this, function (_a) {
@@ -140,7 +139,7 @@ var Main = (function (_super) {
             });
         });
     };
-    Main.prototype.loadTheme = function () {
+    Load.prototype.loadTheme = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             // load skin theme configuration file, you can manually modify the file. And replace the default skin.
@@ -151,91 +150,7 @@ var Main = (function (_super) {
             }, _this);
         });
     };
-    //创建背景
-    Main.prototype.createGrid = function () {
-        this.m_stageGrid = undefined;
-        this.m_stageGrid = new eui.Rect(Main.m_sStageWidth, Main.m_sStageHeight, Main.m_sStageColor);
-        this.m_stageGrid.x = this.stage.stageWidth / 2 - Main.m_sStageWidth / 2;
-        this.m_stageGrid.y = this.stage.stageHeight / 2 - Main.m_sStageHeight / 2;
-        this.addChild(this.m_stageGrid);
-        //背景小方格
-        for (var col = 0; col < Main.m_sNum; col++) {
-            for (var row = 0; row < Main.m_sNum; row++) {
-                var count = col * Main.m_sNum + row;
-                var vGrid = new eui.Rect(Main.m_sGridWidth, Main.m_sGridHeight, 0x0000ff);
-                vGrid.x = (row + 1) * Main.m_sSpace + row * Main.m_sGridWidth;
-                vGrid.y = (col + 1) * Main.m_sSpace + col * Main.m_sGridHeight;
-                this.m_stageGrid.addChild(vGrid);
-            }
-        }
-        var myGrid = new Game();
-        this.m_stageGrid.addChild(myGrid);
-        //var mask:Mask = new Mask();
-        //this.addChild(mask);
-    };
-    //重置按钮  //图片资源不知道为何加载不上
-    Main.prototype.btnReset = function () {
-        var btn = new eui.Button();
-        btn.x = this.stage.stageWidth / 2 + 30;
-        btn.y = 30;
-        btn.label = "重新开始";
-        // console.log(btn.source);
-        this.addChild(btn);
-        btn.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouch, this);
-    };
-    Main.prototype.onTouch = function (event) {
-        ///获得当前按钮
-        var btn = event.target;
-        switch (event.type) {
-            case egret.TouchEvent.TOUCH_BEGIN:
-                break;
-            case egret.TouchEvent.TOUCH_END:
-                break;
-            case egret.TouchEvent.TOUCH_TAP:
-                if (1 < Main.m_sNum && 8 > Main.m_sNum) {
-                    this.removeChild(this.m_stageGrid);
-                    this.createGrid();
-                }
-                break;
-            default:
-                break;
-        }
-    };
-    //输入框和文字添加
-    Main.prototype.numTextInput = function () {
-        var labelTemp = new eui.Label();
-        labelTemp.text = "输入1~7";
-        labelTemp.textColor = 0x000000;
-        labelTemp.size = 20;
-        labelTemp.x = this.stage.stageWidth / 2 - 200;
-        labelTemp.y = 20;
-        this.addChild(labelTemp);
-        this.m_numInput = new eui.TextInput();
-        this.m_numInput.prompt = "n*n方格";
-        this.m_numInput.maxChars = 1;
-        this.m_numInput.x = this.stage.stageWidth / 2 - 200;
-        this.m_numInput.y = 45;
-        this.m_numInput.width = 170;
-        this.addChild(this.m_numInput);
-        this.m_numInput.addEventListener(egret.Event.CHANGE, this.onChange, this);
-    };
-    Main.prototype.onChange = function (e) {
-        console.log(this.m_numInput.text);
-        Main.m_sNum = Number(this.m_numInput.text);
-        Main.m_sGridWidth = 400 / Main.m_sNum;
-        Main.m_sGridHeight = 400 / Main.m_sNum;
-        Main.m_sSpace = 40 / Main.m_sNum;
-        Main.m_sStageWidth = Main.m_sGridWidth * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
-        Main.m_sStageHeight = Main.m_sGridHeight * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
-    };
-    Main.m_sNum = 4;
-    Main.m_sGridWidth = 400 / Main.m_sNum;
-    Main.m_sGridHeight = 400 / Main.m_sNum;
-    Main.m_sSpace = 40 / Main.m_sNum;
-    Main.m_sStageWidth = Main.m_sGridWidth * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
-    Main.m_sStageHeight = Main.m_sGridHeight * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
-    Main.m_sStageColor = 0x000000;
-    return Main;
+    return Load;
 }(eui.UILayer));
-__reflect(Main.prototype, "Main");
-//# sourceMappingURL=Main.js.map
+__reflect(Load.prototype, "Load");
+//# sourceMappingURL=Load.js.map

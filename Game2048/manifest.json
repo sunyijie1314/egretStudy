@@ -9,9 +9,12 @@
 	],
 	"game": [
 		"bin-debug/2048.js",
+		"bin-debug/AssetAdapter.js",
 		"bin-debug/Grid.js",
+		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
 		"bin-debug/Mask.js",
+		"bin-debug/ThemeAdapter.js",
 		"bin-debug/Util.js"
 	]
 }

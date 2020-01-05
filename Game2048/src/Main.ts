@@ -1,6 +1,33 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-present, Egret Technology.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
 
-
-class Main extends egret.DisplayObjectContainer{    
+class Main extends eui.UILayer {
     public static m_sNum:number = 4;
     public static m_sGridWidth:number = 400 / Main.m_sNum;
     public static m_sGridHeight:number = 400 / Main.m_sNum;
@@ -11,17 +38,67 @@ class Main extends egret.DisplayObjectContainer{
     private m_numInput:eui.TextInput;
     private m_stageGrid:eui.Rect;
 
-    public constructor(){
-        super();
-        this.addEventListener(egret.Event.ADDED_TO_STAGE,this.onAddToStage,this);
+    protected createChildren(): void {
+        super.createChildren();
+
+        egret.lifecycle.addLifecycleListener((context) => {
+            // custom lifecycle plugin
+        })
+
+        egret.lifecycle.onPause = () => {
+            egret.ticker.pause();
+        }
+
+        egret.lifecycle.onResume = () => {
+            egret.ticker.resume();
+        }
+
+        //inject the custom material parser
+        //注入自定义的素材解析器
+        let assetAdapter = new AssetAdapter();
+        egret.registerImplementation("eui.IAssetAdapter", assetAdapter);
+        egret.registerImplementation("eui.IThemeAdapter", new ThemeAdapter());
+
+
+        this.runGame().catch(e => {
+            console.log(e);
+        })
     }
-    private onAddToStage(event:egret.Event){
+
+    private async runGame() {
+        await this.loadResource()
         this.createGrid();    
         this.numTextInput(); 
         this.btnReset();
     }
 
-    //创建背景
+    private async loadResource() {
+        try {
+            const loadingView = new LoadingUI();
+            this.stage.addChild(loadingView);
+            await RES.loadConfig("resource/default.res.json", "resource/");
+            await this.loadTheme();
+            await RES.loadGroup("preload", 0, loadingView);
+            this.stage.removeChild(loadingView);
+        }
+        catch (e) {
+            console.error(e);
+        }
+    }
+
+    private loadTheme() {
+        return new Promise((resolve, reject) => {
+            // load skin theme configuration file, you can manually modify the file. And replace the default skin.
+            //加载皮肤主题配置文件,可以手动修改这个文件。替换默认皮肤。
+            let theme = new eui.Theme("resource/default.thm.json", this.stage);
+            theme.addEventListener(eui.UIEvent.COMPLETE, () => {
+                resolve();
+            }, this);
+
+        })
+    }
+
+       //创建背景
     private createGrid():void
     {
         this.m_stageGrid = undefined;
@@ -57,7 +134,6 @@ class Main extends egret.DisplayObjectContainer{
         btn.x = this.stage.stageWidth / 2 + 30;
         btn.y = 30;
         btn.label = "重新开始";
-        btn.skinName = "resource/eui_skins/ButtonSkin.exml";
         // console.log(btn.source);
         this.addChild(btn);
         btn.addEventListener(egret.TouchEvent.TOUCH_TAP,this.onTouch,this);
@@ -88,7 +164,7 @@ class Main extends egret.DisplayObjectContainer{
     private numTextInput():void
     {
         var labelTemp:eui.Label = new eui.Label();
-        labelTemp.text = "输入1~7,变成N*N：";
+        labelTemp.text = "输入1~7";
         labelTemp.textColor = 0x000000;
         labelTemp.size = 20;
         labelTemp.x = this.stage.stageWidth / 2 - 200;
@@ -96,8 +172,7 @@ class Main extends egret.DisplayObjectContainer{
         this.addChild(labelTemp);
 
         this.m_numInput = new eui.TextInput();
-        this.m_numInput.skinName = "resource/eui_skins/TextInputSkin.exml";
-        // this.m_numInput.prompt = "输入n变成n*n方格：";     //默认输入没有聚焦前不会显示
+        this.m_numInput.prompt = "n*n方格";
         this.m_numInput.maxChars = 1;
         this.m_numInput.x = this.stage.stageWidth / 2 - 200;
         this.m_numInput.y = 45;
@@ -115,19 +190,5 @@ class Main extends egret.DisplayObjectContainer{
         Main.m_sStageWidth = Main.m_sGridWidth * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
         Main.m_sStageHeight = Main.m_sGridHeight * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
         
-    }
-
-    //随机数
-    public static rand(number:number):number
-    {
-        var today:Date = new Date(); 
-        var seed = today.getTime();
-        return Math.ceil( this.rnd( seed ) * number );
-    }
-
-    private static rnd(seed:number):number
-    {
-        seed = ( seed * 9301 + 49297 ) % 233280;
-        return seed / ( 233280.0 );
     }
 }

@@ -19,6 +19,16 @@ var Util = (function () {
         };
         return nullInfo;
     };
+    //随机数
+    Util.rand = function (number) {
+        var today = new Date();
+        var seed = today.getTime();
+        return Math.ceil(this.rnd(seed) * number);
+    };
+    Util.rnd = function (seed) {
+        seed = (seed * 9301 + 49297) % 233280;
+        return seed / (233280.0);
+    };
     //方格参数
     Util.nums = [
         {

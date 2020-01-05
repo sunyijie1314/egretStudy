@@ -71,4 +71,18 @@ class Util {
         }
         return nullInfo;
     }
+
+        //随机数
+    public static rand(number:number):number
+    {
+        var today:Date = new Date(); 
+        var seed = today.getTime();
+        return Math.ceil( this.rnd( seed ) * number );
+    }
+
+    private static rnd(seed:number):number
+    {
+        seed = ( seed * 9301 + 49297 ) % 233280;
+        return seed / ( 233280.0 );
+    }
 }

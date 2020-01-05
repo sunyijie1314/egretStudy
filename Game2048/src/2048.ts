@@ -365,17 +365,17 @@ class Game extends egret.DisplayObjectContainer {
             return;
         }
         
-        var num:number = Main.rand( Main.m_sNum * Main.m_sNum ) - 1;
+        var num:number = Util.rand( Main.m_sNum * Main.m_sNum ) - 1;
         while (undefined != this.m_grids[num])
         {
-            num = Main.rand( Main.m_sNum * Main.m_sNum ) - 1;
+            num = Util.rand( Main.m_sNum * Main.m_sNum ) - 1;
         }
         this.m_grids[num] = new Grid();
         this.setPosition(num, this.m_grids[num]);
         this.m_grids[num].setWidth(Main.m_sGridWidth);
         this.m_grids[num].setHeight(Main.m_sGridHeight);
 
-        var gridNum = 2 * Main.rand(2);
+        var gridNum = 2 * Util.rand(2);
         let info:any = Util.getNumInfo(gridNum);
         this.m_grids[num].setColor(info.backgroundColor);
         this.m_grids[num].setText(String(info.num));
