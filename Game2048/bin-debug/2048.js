@@ -27,7 +27,7 @@ var Game = (function (_super) {
     //开始
     Game.prototype.start = function () {
         for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++) {
-            if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent)) {
+            if ((undefined != this.m_grids[i]) && (undefined != this.m_grids[i].parent)) {
                 this.m_grids[i].parent.removeChild(this.m_grids[i]);
                 this.m_grids[i] = undefined;
             }
@@ -153,7 +153,7 @@ var Game = (function (_super) {
             var startIndex = startIndexs_1[_i];
             var next = startIndex + nextNum;
             var end = startIndex + nextNum * (layerNum - 1);
-            for (var start = startIndex; start !== end;) {
+            for (var start = startIndex; start != end;) {
                 while (undefined == this.m_grids[next]) {
                     if ((next == end) && (undefined == this.m_grids[end])) {
                         break;
@@ -212,8 +212,12 @@ var Game = (function (_super) {
             Promise.all(mergePromises).then(function () {
                 _this.m_isMerge = false;
                 _this.randomGrid();
-                if (true == _this.isWin()) {
+                if (false == _this.isWin()) {
                     console.log("YOU GOT IT!");
+                    var xTemp = Main.m_sStageWidth / 2 - _this.stage.stageWidth / 2;
+                    var yTemp = Main.m_sStageHeight / 2 - _this.stage.stageHeight / 2;
+                    var mask = new Mask(xTemp, yTemp, _this.stage.stageWidth, _this.stage.stageHeight, "YOU GOT IT!");
+                    _this.addChild(mask);
                 }
             });
         }

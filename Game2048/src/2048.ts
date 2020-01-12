@@ -22,7 +22,7 @@ class Game extends egret.DisplayObjectContainer {
     {
         for (var i = 0; i < Main.m_sNum * Main.m_sNum; i++ )
         {
-            if ((undefined !== this.m_grids[i]) && (undefined !== this.m_grids[i].parent))
+            if ((undefined != this.m_grids[i]) && (undefined != this.m_grids[i].parent))
             {
                 this.m_grids[i].parent.removeChild(this.m_grids[i]);
                 this.m_grids[i] = undefined;
@@ -185,7 +185,7 @@ class Game extends egret.DisplayObjectContainer {
         {
             var next = startIndex + nextNum;
             let end = startIndex + nextNum * (layerNum - 1)
-            for (var start = startIndex; start !== end; )
+            for (var start = startIndex; start != end; )
             {
                 while (undefined == this.m_grids[next])
                 {
@@ -258,8 +258,9 @@ class Game extends egret.DisplayObjectContainer {
             Promise.all(mergePromises).then(() => {
                 this.m_isMerge = false;
                 this.randomGrid();
-            if (true == this.isWin())
+            if (false == this.isWin())
             {
+                //添加提示时记得只需要成功一次就行
                 console.log("YOU GOT IT!");
             }
             });

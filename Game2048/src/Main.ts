@@ -32,8 +32,8 @@ class Main extends eui.UILayer {
     public static m_sGridWidth:number = 400 / Main.m_sNum;
     public static m_sGridHeight:number = 400 / Main.m_sNum;
     public static m_sSpace:number = 40 / Main.m_sNum;
-    private static m_sStageWidth:number = Main.m_sGridWidth * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
-    private static m_sStageHeight:number = Main.m_sGridHeight * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
+    public static m_sStageWidth:number = Main.m_sGridWidth * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
+    public static m_sStageHeight:number = Main.m_sGridHeight * Main.m_sNum + Main.m_sSpace * (Main.m_sNum + 1);
     private static m_sStageColor:number = 0x000000;
     private m_numInput:eui.TextInput;
     private m_stageGrid:eui.Rect;
@@ -122,9 +122,6 @@ class Main extends eui.UILayer {
 
         var myGrid:Game = new Game();
         this.m_stageGrid.addChild(myGrid);
-
-        //var mask:Mask = new Mask();
-        //this.addChild(mask);
     }
 
     //重置按钮  //图片资源不知道为何加载不上
@@ -164,7 +161,7 @@ class Main extends eui.UILayer {
     private numTextInput():void
     {
         var labelTemp:eui.Label = new eui.Label();
-        labelTemp.text = "输入1~7";
+        labelTemp.text = "输入2~7";
         labelTemp.textColor = 0x000000;
         labelTemp.size = 20;
         labelTemp.x = this.stage.stageWidth / 2 - 200;

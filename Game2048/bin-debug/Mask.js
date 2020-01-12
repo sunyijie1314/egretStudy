@@ -10,56 +10,53 @@ r.prototype = e.prototype, t.prototype = new r();
 };
 var Mask = (function (_super) {
     __extends(Mask, _super);
-    function Mask() {
+    function Mask(maskX, maskY, maskWidth, maskHeight, maskText) {
         var _this = _super.call(this) || this;
+        if ((undefined != maskX) && (undefined != maskY) && (undefined != maskWidth) && (undefined != maskHeight) && (undefined != maskText)) {
+            _this.m_x = maskX;
+            _this.m_y = maskY;
+            _this.m_width = maskWidth;
+            _this.m_height = maskHeight;
+            _this.m_strText = maskText;
+        }
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         return _this;
     }
+    //监听事件未删除,仅对主界面有效
     Mask.prototype.onAddToStage = function (event) {
-        var square = new egret.Shape();
-        square.graphics.beginFill(0xff0000);
-        square.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
-        square.graphics.endFill();
-        this.addChild(square);
-        var circle = new egret.Shape();
-        circle.graphics.beginFill(0x0000ff, 0.5);
-        circle.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
-        circle.graphics.endFill();
-        this.testFunc(circle, 0x0000ff, 0.2);
-        //this.addChild(circle);
-        //square.mask = circle;
-        // var shp:egret.Shape = new egret.Shape();					 	// 用来作为遮挡背景
-        // shp.graphics.beginFill(0x00ffff);
-        // shp.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
-        // shp.graphics.endFill();
-        // this.addChild(shp);
-        console.log("!!!!");
-        // this.testFunc(this, 0x00ffff, 0.8);
-        // var shp:egret.Shape = new egret.Shape;
-        // this.addChild(shp);
-        // var shp:egret.Shape = new egret.Shape();	
-        // shp.graphics.beginFill(0xff000f, 1);
-        // // shp.graphics.drawRect(0, 0, 1, 1);
-        // shp.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
-        // shp.graphics.endFill();
-        // this.addChildAt(shp, this.numChildren + 1);
-        // this.mask = shp;
-    };
-    Mask.prototype.testFunc = function (target, bgColor, alpha) {
-        var container = new egret.DisplayObjectContainer();
-        var blendShape = new egret.Shape(); // 用来作为遮挡背景
-        blendShape.graphics.beginFill(bgColor, alpha);
-        blendShape.graphics.drawRect(0, 0, this.width, this.height);
-        blendShape.graphics.endFill();
-        container.addChild(blendShape);
-        container.addChild(target);
-        target.blendMode = egret.BlendMode.ERASE;
-        var renderTexture = new egret.RenderTexture();
-        renderTexture.drawToTexture(container);
-        var blendBitmap = new egret.Bitmap(renderTexture);
-        this.addChild(blendBitmap);
-        blendBitmap.touchEnabled = true; // 允许点击
-        blendBitmap.pixelHitTest = true; // 是否开启精确像素碰撞。设置为true显示对象本身的透明区域将能够被穿透。
+        var _this = this;
+        if ((undefined != this.m_x) || (undefined == this.m_y) || (undefined == this.m_width) || (undefined == this.m_height) || (undefined == this.m_strText)) {
+            this.m_x = 0;
+            this.m_y = 0;
+            this.m_width = this.stage.stageWidth;
+            this.m_height = this.stage.stageHeight;
+            this.m_strText = "";
+        }
+        this.parent.touchEnabled = false;
+        this.parent.touchChildren = false;
+        this.m_mask = new egret.Shape();
+        this.m_mask.graphics.beginFill(0x000000);
+        this.m_mask.graphics.drawRect(0, 0, this.m_width, this.m_height);
+        this.m_mask.graphics.endFill();
+        this.m_mask.alpha = 0.7;
+        this.m_mask.x = this.m_x;
+        this.m_mask.y = this.m_y;
+        this.addChild(this.m_mask);
+        this.m_label = new eui.Label();
+        this.m_label.text = this.m_strText;
+        this.m_label.textColor = 0xffffff;
+        this.m_label.size = 30;
+        this.m_label.x = this.m_width / 2;
+        this.m_label.y = this.m_height / 2;
+        this.m_label.anchorOffsetY = this.m_label.height / 2;
+        this.m_label.anchorOffsetX = this.m_label.width / 2;
+        this.addChild(this.m_label);
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_TAP, function (e) {
+            _this.parent.touchEnabled = true;
+            _this.parent.touchChildren = true;
+            _this.m_mask.visible = false;
+            _this.m_label.visible = false;
+        }, this);
     };
     return Mask;
 }(egret.DisplayObjectContainer));

@@ -170,8 +170,6 @@ var Main = (function (_super) {
         }
         var myGrid = new Game();
         this.m_stageGrid.addChild(myGrid);
-        //var mask:Mask = new Mask();
-        //this.addChild(mask);
     };
     //重置按钮  //图片资源不知道为何加载不上
     Main.prototype.btnReset = function () {
@@ -204,7 +202,7 @@ var Main = (function (_super) {
     //输入框和文字添加
     Main.prototype.numTextInput = function () {
         var labelTemp = new eui.Label();
-        labelTemp.text = "输入1~7";
+        labelTemp.text = "输入2~7";
         labelTemp.textColor = 0x000000;
         labelTemp.size = 20;
         labelTemp.x = this.stage.stageWidth / 2 - 200;
