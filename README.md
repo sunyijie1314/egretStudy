@@ -1,15 +1,6 @@
 # egretStudy
 Start studying egret! I would upload the demo game which I write.
 
-egret学习计划
-
-2048：熟悉egret的SDK和TS的代码，学习加载资源、缓动动画、控件
-可通用：loading、蒙版。
-
-chrome小恐龙：熟悉碰撞、帧动画、Listview
-
-简易版马里奥：网络、数据库、场景切换等
-
 2020/1/5
 说一下写完2048的感想吧，这不是第一次写游戏，但是给我的感觉非常不好。
 最开始学Unity3D，可能是第一次接触就上手3D的原因，觉得难，不过我还是坚持完成了一个游戏。
